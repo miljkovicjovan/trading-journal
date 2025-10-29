@@ -27,6 +27,8 @@ export default function TradeDay({ date, trades }: TradeDayProps) {
     year: "numeric",
   });
 
+  const winRate = trades.length > 0 ? (trades.filter(t => t.pnl > 0).length / trades.length) * 100 : 0;
+
   return (
     <div className="border border-gray-700 rounded-lg bg-gray-900 overflow-hidden">
       <button
@@ -35,10 +37,11 @@ export default function TradeDay({ date, trades }: TradeDayProps) {
       >
         <div className="flex items-center gap-2">
           <span>{formattedDate}</span>
-          <span className={`${pnlColor} font-semibold`}>
+          <span> PnL: <span className={`${pnlColor} font-semibold`}>
             ({dayPnL >= 0 ? "+" : "-"}${Math.abs(dayPnL).toFixed(2)})
-          </span>
+          </span></span>
           <span>{trades.length} trades</span>
+          <span>Win Rate: <span className={`${winRate > 50 ? "text-green-400" : "text-red-400"}`}>{winRate.toFixed(1)}%</span></span>
         </div>
         <span>{collapsed ? "▼" : "▲"}</span>
       </button>

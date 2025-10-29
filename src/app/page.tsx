@@ -3,8 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import TradeList from "@/components/TradeList";
-//import CalendarGrid from "@/components/CalendarGrid";
-//import MonthSelector from "@/components/MonthSelector";
+import TradeStats from "@/components/TradeStats";
 
 type Trade = {
   id: number;
@@ -42,8 +41,9 @@ export default function Page() {
 
   return (
     <div className="min-h-screen bg-black text-white p-6">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto space-y-6">
         <Header onUploadComplete={fetchTrades} />
+        <TradeStats trades={trades} />
         <TradeList trades={trades} />
       </div>
     </div>
