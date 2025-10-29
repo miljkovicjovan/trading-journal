@@ -20,8 +20,9 @@ model Trade {
   avgFillPrice Float?
   status       String
   updateTime   DateTime
-  orderId      String
+  orderId      String   @unique
   expiry       String?
   expiryTime   String?
   createdAt    DateTime @default(now())
 }
+

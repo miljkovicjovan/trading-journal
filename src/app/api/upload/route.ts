@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
       createdAt: new Date(),
     }));
 
-    await prisma.trade.createMany({ data: trades });
+    await prisma.trade.createMany({ data: trades, skipDuplicates: true });
 
     return NextResponse.json({ success: true, count: trades.length });
   } catch (error) {
