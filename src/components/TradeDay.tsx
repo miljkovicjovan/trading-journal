@@ -16,7 +16,7 @@ type TradeDayProps = {
 };
 
 export default function TradeDay({ date, trades }: TradeDayProps) {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const dayPnL = trades.reduce((sum, t) => sum + t.pnl, 0);
   const pnlColor = dayPnL > 0 ? "text-green-400" : dayPnL < 0 ? "text-red-400" : "text-gray-300";
 
@@ -38,6 +38,7 @@ export default function TradeDay({ date, trades }: TradeDayProps) {
           <span className={`${pnlColor} font-semibold`}>
             ({dayPnL >= 0 ? "+" : "-"}${Math.abs(dayPnL).toFixed(2)})
           </span>
+          <span>{trades.length} trades</span>
         </div>
         <span>{collapsed ? "▼" : "▲"}</span>
       </button>

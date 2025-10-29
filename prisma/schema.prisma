@@ -13,7 +13,7 @@ model Trade {
   priceFormat     Int
   priceFormatType Int
   tickSize        Float
-  buyFillId       String @unique
+  buyFillId       String
   sellFillId      String
   qty             Int
   buyPrice        Float
@@ -23,6 +23,8 @@ model Trade {
   soldTimestamp   DateTime
   duration        String
   createdAt       DateTime  @default(now())
+
+  @@unique([buyFillId, sellFillId])
 }
 
 
