@@ -8,21 +8,21 @@ datasource db {
 }
 
 model Trade {
-  id           Int      @id @default(autoincrement())
-  symbol       String
-  side         String
-  type         String
-  qty          Int
-  limitPrice   Float?
-  stopPrice    Float?
-  takeProfit   Float?
-  stopLoss     Float?
-  avgFillPrice Float?
-  status       String
-  updateTime   DateTime
-  orderId      String   @unique
-  expiry       String?
-  expiryTime   String?
-  createdAt    DateTime @default(now())
+  id              Int       @id @default(autoincrement())
+  symbol          String
+  priceFormat     Int
+  priceFormatType Int
+  tickSize        Float
+  buyFillId       String
+  sellFillId      String
+  qty             Int
+  buyPrice        Float
+  sellPrice       Float
+  pnl             Float
+  boughtTimestamp DateTime
+  soldTimestamp   DateTime
+  duration        String
+  createdAt       DateTime  @default(now())
 }
+
 

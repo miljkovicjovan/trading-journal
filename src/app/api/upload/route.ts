@@ -5,20 +5,19 @@ import { parse } from "csv-parse/sync";
 const prisma = new PrismaClient();
 
 type CsvTrade = {
-  Symbol: string;
-  Side: string;
-  Type: string;
-  Qty: string;
-  "Limit Price"?: string;
-  "Stop Price"?: string;
-  "Take Profit"?: string;
-  "Stop Loss"?: string;
-  "Avg Fill Price"?: string;
-  Status: string;
-  "Update Time": string;
-  "Order ID": string;
-  Expiry?: string;
-  "Expiry Time"?: string;
+  symbol: string;
+  _priceFormat: string;
+  _priceFormatType: string;
+  _tickSize: string;
+  buyFillId: string;
+  sellFillId: string;
+  qty: string;
+  buyPrice: string;
+  sellPrice: string;
+  pnl: string;
+  boughtTimestamp: string;
+  soldTimestamp: string;
+  duration: string;
 };
 
 export async function POST(req: NextRequest) {
@@ -41,26 +40,44 @@ export async function POST(req: NextRequest) {
       trim: true,
     }) as CsvTrade[];
 
+    const LOSS_PER_CONTRACT = 1.90;
+
+    function parsePnl(pnlStr: string, qty: number): number {
+      // Parse original PnL
+      pnlStr = pnlStr.trim();
+      let pnl = 0;
+
+      if (pnlStr.startsWith("$(") && pnlStr.endsWith(")")) {
+        pnl = -parseFloat(pnlStr.slice(2, -1));
+      } else {
+        pnl = parseFloat(pnlStr.replace("$", ""));
+      }
+
+      // Subtract per-contract fee
+      pnl -= LOSS_PER_CONTRACT * qty;
+
+      return pnl;
+    }
+
     // Convert CSV rows to Prisma format
-    const trades: Omit<Trade, "id">[] = records.map((r) => ({
-      symbol: r.Symbol,
-      side: r.Side,
-      type: r.Type,
-      qty: parseInt(r.Qty, 10) || 0,
-      limitPrice: r["Limit Price"] ? parseFloat(r["Limit Price"]) : null,
-      stopPrice: r["Stop Price"] ? parseFloat(r["Stop Price"]) : null,
-      takeProfit: r["Take Profit"] ? parseFloat(r["Take Profit"]) : null,
-      stopLoss: r["Stop Loss"] ? parseFloat(r["Stop Loss"]) : null,
-      avgFillPrice: r["Avg Fill Price"]
-        ? parseFloat(r["Avg Fill Price"])
-        : null,
-      status: r.Status,
-      updateTime: new Date(r["Update Time"]),
-      orderId: r["Order ID"],
-      expiry: r.Expiry || null,
-      expiryTime: r["Expiry Time"] || null,
-      createdAt: new Date(),
-    }));
+    const trades: Omit<Trade, "id">[] = records.map((r) => {
+      return {
+        symbol: r.symbol,
+        priceFormat: parseInt(r._priceFormat, 10),
+        priceFormatType: parseInt(r._priceFormatType, 10),
+        tickSize: parseFloat(r._tickSize),
+        buyFillId: r.buyFillId,
+        sellFillId: r.sellFillId,
+        qty: parseInt(r.qty, 10),
+        buyPrice: parseFloat(r.buyPrice),
+        sellPrice: parseFloat(r.sellPrice),
+        pnl: parsePnl(r.pnl, parseInt(r.qty, 10)),
+        boughtTimestamp: new Date(r.boughtTimestamp),
+        soldTimestamp: new Date(r.soldTimestamp),
+        duration: r.duration,
+        createdAt: new Date(),
+      };
+    });
 
     await prisma.trade.createMany({ data: trades, skipDuplicates: true });
 
