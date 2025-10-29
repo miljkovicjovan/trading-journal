@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
-import TradeFilters from "@/components/TradeFilters";
-import TradeUpload from "@/components/TradeUpload";
 import TradeList from "@/components/TradeList";
+//import CalendarGrid from "@/components/CalendarGrid";
+//import MonthSelector from "@/components/MonthSelector";
 
 type Trade = {
   id: number;
@@ -25,7 +25,6 @@ type Trade = {
 
 export default function Page() {
   const [trades, setTrades] = useState<Trade[]>([]);
-  const [showUpload, setShowUpload] = useState(true);
 
   const fetchTrades = async () => {
     try {
@@ -44,11 +43,7 @@ export default function Page() {
   return (
     <div className="min-h-screen bg-black text-white p-6">
       <div className="max-w-6xl mx-auto">
-        <Header onUploadClick={() => setShowUpload((prev) => !prev)} />
-        {showUpload && <TradeUpload onUploadComplete={fetchTrades} />}
-        <section className="mt-4 flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Trades</h2>
-        </section>
+        <Header onUploadComplete={fetchTrades} />
         <TradeList trades={trades} />
       </div>
     </div>
