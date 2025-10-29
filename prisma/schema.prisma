@@ -13,7 +13,7 @@ model Trade {
   priceFormat     Int
   priceFormatType Int
   tickSize        Float
-  buyFillId       String
+  buyFillId       String @unique
   sellFillId      String
   qty             Int
   buyPrice        Float
