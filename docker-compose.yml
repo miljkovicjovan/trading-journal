@@ -1,27 +1,31 @@
----
 services:
+  app:
+    build: .
+    container_name: trading-journal-app
+    ports:
+      - "3000:3000"
+      - "5555:5555" 
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/trading_journal
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: npm run dev
+
   db:
     image: postgres:16-alpine
+    container_name: trading-journal-db
+    restart: always
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: postgres
       POSTGRES_DB: trading_journal
     ports:
       - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-
-  app:
-    build: .
-    command: sh -c "npm install && npm run dev -- -H 0.0.0.0"
-    ports:
-      - "3000:3000"
-    environment:
-      DATABASE_URL: "postgresql://postgres:password@db:5432/trading_journal"
-    depends_on:
-      - db
-    volumes:
-      - .:/usr/src/app
 
 volumes:
   pgdata:

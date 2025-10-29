@@ -8,12 +8,20 @@ datasource db {
 }
 
 model Trade {
-  id        Int      @id @default(autoincrement())
-  symbol    String
-  buyPrice  Float
-  sellPrice Float
-  pnl       Float
-  qty       Int
-  boughtAt  DateTime
-  soldAt    DateTime
+  id           Int      @id @default(autoincrement())
+  symbol       String
+  side         String
+  type         String
+  qty          Int
+  limitPrice   Float?
+  stopPrice    Float?
+  takeProfit   Float?
+  stopLoss     Float?
+  avgFillPrice Float?
+  status       String
+  updateTime   DateTime
+  orderId      String
+  expiry       String?
+  expiryTime   String?
+  createdAt    DateTime @default(now())
 }
